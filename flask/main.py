@@ -3,7 +3,7 @@ This is a basic Python Flask Web App
 Main.py is the file which is called to run your web app.
 '''
 #Importing the Flask Module
-from flask import Flask, request, render_template, redirect, url_for
+from flask import Flask, request, render_template, redirect, url_for, session, flash
 
 '''
 Creating a Flask Object
@@ -11,6 +11,7 @@ Creating a Flask Object
 When we help Flask to find the root, finding all other files will be a lot more easier. 
 '''
 app = Flask(__name__)
+app.secret_key = "Secret Key"
 
 '''
 Now we need to define the different routes.
@@ -33,13 +34,17 @@ return value of that function.
 #Defining route of home page
 @app.route('/')
 def index():
-    return 'This is the home page'
+    return 'This is the home page. Thank you !'
 
 #Definig the route of about page
 @app.route('/about')
 def about():
     return '<h2>About Us</h2>'
 
+#Defining the route of welcome page
+@app.route('/welcome')
+def welcome():
+    return '<h2>Welcome ! Nice to have you</h2>'
 '''
 Passing values through URL and changing
 page content according to the values
@@ -130,6 +135,7 @@ Now we will move on to how to submit forms
 using Flask - Basically a Login and SignUp
 form.
 '''
+#Defining the route for login 
 @app.route('/login', methods=['GET','POST'])
 def login():
     error = None
@@ -137,8 +143,17 @@ def login():
         if request.form["username"] != "admin" or request.form["password"] != "admin":
             error = "Invalid username and password"
         else:
-            return redirect(url_for('about'))
+            session['logged_in'] = True
+            flash("You were Logged In")
+            return redirect(url_for('welcome'))
     return render_template("login.html", error=error)
+
+#Defining the route of logout
+@app.route('/logout')
+def logout():
+    session.pop['logged_in', None]
+    flash("You were just Logged out")
+    return redirect(url_for('about'))
 
 #Starts the app running
 if __name__ == "__main__":
