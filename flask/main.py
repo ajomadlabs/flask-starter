@@ -3,7 +3,7 @@ This is a basic Python Flask Web App
 Main.py is the file which is called to run your web app.
 '''
 #Importing the Flask Module
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect, url_for
 
 '''
 Creating a Flask Object
@@ -124,6 +124,21 @@ display a list of objects.
 def userlist():
     users = ['Bobin', 'Megha', 'Arshit', 'Seira']
     return render_template("userslist.html", users=users)
+
+'''
+Now we will move on to how to submit forms
+using Flask - Basically a Login and SignUp
+form.
+'''
+@app.route('/login', methods=['GET','POST'])
+def login():
+    error = None
+    if request.method == 'POST':
+        if request.form["username"] != "admin" or request.form["password"] != "admin":
+            error = "Invalid username and password"
+        else:
+            return redirect(url_for('about'))
+    return render_template("login.html", error=error)
 
 #Starts the app running
 if __name__ == "__main__":
